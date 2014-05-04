@@ -1,24 +1,38 @@
 //Programmed by demiurgosoft
 //Decksim: deck.h
 //Version:beta 0.1
-//each card has a pint and his number
-typedef unsigned short card_num;
-typedef string pint_name;
 
+typedef unsigned short card_num;
+typedef string pint_name,card_name;
 
 struct card {
-    pint_name pint
-    card_num num
-};
-//configuration for a certain deck
-struct deck_config {
-    unsigned short max_number; //highest number possible in each pint
+    pint_name pint;
+    card_name name; //name of card, if it has
+    card_num num; //Number of card
 
-    bool repeated_pint; //true if allow pints repeated on a deck
-    bool repeated_numbers; //true if allows numbers repeated
-    bool full_pint; //if each pint is contains a card with each number
+    bool operator==(const card &c) const {
+        bool b=true;
+        if(pint!=c.pint) b=false;
+        else if(name!=c.name) b=false;
+        else if(num!=c.num) b=false;
+        return b;
+    }
 };
 
+//creates a card
+card create_card(card_num num,const pint_name &pn) {
+    card c;
+    c.num=num;
+    c.pint=pn;
+    return c;
+}
+//creates a card with name
+card create_card(card_num num,const pint_name &pn,const card_name &nam) {
+    card c;
+    c.num=num;
+    c.pint=pn;
+    c.name=nam;
+}
 
 
 /*===================================================================================*/
@@ -26,84 +40,197 @@ struct deck_config {
 class deck {
 private:
     deque<card> deck_cards;
-    deck_config conf; //configuration of the deck
-    set<pint_name> pints; //pints in deck
-    map<card_num,string> card_names//stores numbers with different names (i.e 1=A,11=J);
-    set<card_num> taken_numbers; //stores numbers "taken" from the deck (i.e decks without some numbers in the middle)
 public:
     deck() {
     }
-    deck(const deque<card> &cards2,deck_config conf2,map<card_num,string> cn,vector<pint_name> p,set<card_num> tn) {
+    deck(const deque<card> &cards2) {
         deck_cards=cards2;
-        conf=conf2;
-        card_names=cn;
-        pints=p;
-        taken_numbers=tn;
         check();
     }
-
-    //MODIFICATION
-    void add_pint(const pint_name &p) {
-        pints.insert(p);
+    deck(const deck &d) {
+        (*this)=d;
     }
+    //MODIFICATION
     //true if added
-    bool add_card(const card &c) {
-        if(deck_config.max_number>=c.num && c.num!=0)
-            if(is_pint(c.pint)) deck_cards.push_back(
-            }
     void clear() {
         deck_cards.clear();
-        pints.clear();
-        card_names.clear();
-        taken_numbers.clear();
-        config.max_number=0;
+    }
+    void add_card_bottom(const card &c) {
+        deck_cards.push_back(c);
+    }
+    void add_card_top(const card &c) {
+        deck_cards.push_front(c);
+    }
+    //takes "top" card (erasing from deck)
+    card take_card() {
+        card c;
+        c=top();
+        deck_cards.pop_front();
+        return c;
+    }
+    //takes bottom card
+    card take_bottom_card() {
+        card c;
+        c=bottom();
+        deck_cards.pop_back();
+        return c;
+    }
+    //ACCESS
+    unsigned int size() const {
+        return deck_cards.size();
+    }
+    card get_card(unsigned int pos) const {
+        return deck_cards[pos];
+    }
+    card top() const {
+        return deck_cards.front();
+    }
+    card bottom() const {
+        return deck_cards.back();
+    }
+    bool empty() const {
+        return deck_cards.empty();
+    }
+    //JOBS
+
+    //removes the top package of n cards (+- err)
+    deck cut(unsigned int n,unsigned short err=0) {
+        deck d2;
+        if(n>0) {
+            deque<card>::iterator it1,it2;
+            it1=deck_cards.begin();
+            n=error_number(n,err);
+            if(n>=size()) n=size()-1; //cant cut all the cards
+            it2=deck_cards.begin()+n;
+            (d2.deck_cards).assign(it1,it2); //put the cards in the new deck;
+            ((*this).deck_cards).erase(it1,it2); //removes the cards from this deck
+        }
+        return d2;
+    }
+    //removes n cards from top and places down in the deck (+-err)
+    void cut_and_complete(unsigned int n,unsigned short err=0) {
+        deck d2;
+        d2=cut(n,err); //cuts the deck
+        (*this)+=d2; //put d2 at the end of the deck
+    }
+
+    //makes a fair shuffle to the deck (completely random) (Fisher-yates shuffle)
+    void random_shuffle() {
+        //srand(time(NULL)); //new seed;
+        unsigned int siz=size();
+        card c;
+        unsigned int r;
+        for(unsigned int i=0; i<siz; i++) {
+            r=rand()%siz;
+            c=deck_cards[i];
+            deck_cards[i]=deck_cards[r];
+            deck_cards[r]=c;
+        }
+    }
+    //A shuffle makes by cutting and mixing 1-1 (+- err)
+    void american_shuffle(unsigned short err) {
+        deck d2=cut(size()/2,err); //cuts half the deck
+        american_merge(d2,err); //merge the two decks with american shuffle
+    }
+    //small "cuts" that are placed down of a new deck,
+    //ncuts indicates the number of cuts made (< ncards), these cuts are not necessarily equal
+    void hindi_shuffle(unsigned short ncuts,unsigned short err) {
+    }
+    //similar to american shuffle, but perfect mix
+    void faro_shuffle() {
+        american_shuffle(0);
+    }
+
+    //merge two decks card by card (from bottom) (starts with first package)
+    //err indicates the range from 1 to err+1
+    void american_merge(const deck &d2,unsigned short err) {
+        deque<card> dc;
+        unsigned short n;
+        deque<card>::iterator it1,it2;
+        while(d2.size()>0 && (*this).size()>0) {
+            //first package
+            n=rand()%(err+1)+1; //the error is in [1,err+1]
+            if(n>(*this).size())n=(*this).size();
+            //insert
+            //second package
+            n=rand()%(err+1)+1; //the error is in [1,err+1]
+            if(n>d2.size()) n=d2.size();
+        }
+        deck_cards=dc;
+    }
+
+
+    //OPERATORS
+    //operator==
+    bool operator==(const deck &d2) const {
+        return deck_cards==d2.deck_cards;
+    }
+    // operator!=
+    bool operator!=(const deck &d2) const {
+        return !((*this)==d2);
+    }
+    // operator=
+    deck &operator=(const deck &d2) {
+        if(this!=&d2) deck_cards=d2.deck_cards;
+        return (*this);
+    }
+    //operator +,+=
+    //add the second deck at the end of the first
+    deck operator+(const deck &d2) const {
+        deck d1(*this);
+        d1.deck_cards.insert((d1.deck_cards).end(),(d2.deck_cards).begin(),(d2.deck_cards).end());
+        return (*this);
+    }
+    deck &operator+=(const deck &d2) {
+        deck_cards.insert(deck_cards.end(),(d2.deck_cards).begin(),(d2.deck_cards).end());
+        return (*this);
     }
 
 
 
-    //ACCESS
-    bool is_pint(const pint_name &n) {
-        ¡ const {
-            if(pints.find(n)!=pints.end()) return true;
-            else return false;
-        }
+    //operator <<
+    /*   ostream& operator<< (ostream &out, const deck &d2) {
+           unsigned int siz=d2.size();
+           for(unsigned int i=0;i<siz;i++){
+                        card c;
+                        c=d2.get_card(i);
+                        out<<"[";
+                        if((c.name).empty()==false) out<<c.name;
+                        else out<<c.num;
+                        out<<",";
+                        out<<c.pint;
+                        }
+           return out;
+       }*/
 private:
-        //inserts (and overrides) a name for a number in deck_config
-        void set_number_name(unsigned short num,string name) {
-            card_names.erase(num); //erase the name of the card if it exists
-            card_names.insert(make_pair(num,name)); //inserts name;
+
+    //calculares a "random" number in [n-err,n+err] (always positive)
+    unsigned int error_number(unsigned int n,unsigned int err) const {
+        if(n!=0 && err!=0) { //if n==0, return 0,if err==0, return n
+            if(err>n) err=n; //the error will never be biggest than n
+            int err2=rand()%(err*2)+1; //the error is in [-err,+err]
+            err2=err2-err;
+            n=n+err2;
+            if(n==0) n=1; //n cant be 0 after error
         }
-        //returns the string of the card number according to conf
-        //(if exists a certain name, return that name, if not, returns a string of the number
-        string get_number_name(unsigned short num) const {
-            string res;
-            map<unsigned_short,string>::const_iterator it;
-            it=card_names.find(num);
-            if(it!=(card_names.end()) res=(*it).second; //name found
-                    else res<<num; //name will be the number
-                        return res;
-            }
-    //returns the standard_config for a full deck for a number of pints and cards
-    deck_config full_deck_config(unsigned short numpints,unsigned short maxnum) const {
-            deck_config dc;
-            dc.max_number=maxnum;
-            dc.repeated_pint=false;
-            dc.repeated_numbers=false;
-            dc.full_pint=true;
-            return dc;
-        }
-        //returns standard deck_config for a not-full deck
-        deck_config parcial_deck_config(unsigned short numpints,unsigned short maxnum) const {
-            deck_config dc;
-            dc.max_number=maxnum;
-            dc.repeated_pint=true;
-            dc.repeated_numbers=true;
-            dc.full_pint=false;
-            return dc;
-        }
-        //Check the deck is correct
-        bool check() const {
-            bool b=true;
-            return b; //TODO
-        }
-    };
+        return n;
+    }
+    //operator <<, show the operations os the standard output
+    /*friend ostream  &operator<< (ostream &out, const deck &d2) {
+        unsigned int siz=d2.size();
+        for(unsigned int i=0;i<siz;i++){
+                     card c;
+                     c=d2.get_card(i);
+                     out<<"[";
+                     if((c.name).empty()==false) out<<c.name;
+                     else out<<c.num;
+                     out<<",";
+                     out<<c.pint;
+                     }
+        return out;
+    }*/
+    //Check the deck is correct
+    void check() const {
+    }
+};
+

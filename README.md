@@ -1,4 +1,8 @@
-decksim
-=======
+decksim V0.1
+============
+Programmed by Demiurgosoft
 
-Deck emulator with real shufle methods to emulate a real deck, for any type of deck and game
+Deck simulator with real shufle methods to emulate a real deck, for any type of deck and game
+
+decksim is open-source and available for download at:
+https://github.com/demiurgosoft/decksim
