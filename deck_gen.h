@@ -1,6 +1,6 @@
 //Programmed by Demiurgos
 //Decksim: Deck Generators
-//Version:0.2
+//Version:0.3
 //Some deck generators
 
 //generates a full poker deck to test deck class
@@ -8,7 +8,7 @@
 deck_config poker_deck_generator(bool jokers) {
     string n="Poker";
     card_num max=13;
-    vector<pint_name> p;
+    vector<suit_name> p;
     p.push_back("Spades");
     p.push_back("Hearts");
     p.push_back("Clubs");
@@ -33,7 +33,7 @@ deck_config poker_deck_generator(bool jokers) {
 deck_config spanish_deck_generator(bool short_deck,bool comodin) {
     string n="Spanish";
     card_num max=12;
-    vector<pint_name> p;
+    vector<suit_name> p;
     p.push_back("Oros");
     p.push_back("Bastos");
     p.push_back("Espadas");
@@ -55,3 +55,44 @@ deck_config spanish_deck_generator(bool short_deck,bool comodin) {
     return generate_deck(n,max,p,m,erased,extra);
 }
 
+//similar to the poker(english) deck, but without jokers and different names
+deck_config french_deck_generator() {
+    string n="French";
+    card_num max=13;
+    vector<suit_name> p;
+    p.push_back("Pique");
+    p.push_back("Coeur");
+    p.push_back("Trefle");
+    p.push_back("Carreau");
+    map<card_num,card_name> m;
+    m.insert(make_pair(11,"Valet"));
+    m.insert(make_pair(12,"Dame"));
+    m.insert(make_pair(13,"Roi"));
+    set<card_num> erased;
+    vector<card_name> extra;
+    return generate_deck(n,max,p,m,erased,extra);
+}
+
+//German deck of 36 cards
+deck_config german_deck_generator() {
+    string n="German";
+    card_num max=14;
+    vector<suit_name> p;
+    p.push_back("Schellen");
+    p.push_back("Herz");
+    p.push_back("Gras");
+    p.push_back("Eichel");
+    map<card_num,card_name> m;
+    m.insert(make_pair(11,"Bauer"));
+    m.insert(make_pair(12,"Dame"));
+    m.insert(make_pair(13,"König"));
+    m.insert(make_pair(14,"Daus"));
+    set<card_num> erased;
+    erased.insert(1);
+    erased.insert(2);
+    erased.insert(3);
+    erased.insert(4);
+    erased.insert(5);
+    vector<card_name> extra;
+    return generate_deck(n,max,p,m,erased,extra);
+}

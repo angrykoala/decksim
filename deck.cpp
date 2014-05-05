@@ -1,6 +1,6 @@
 //Programmed by Demiurgos
 //Decksim: deck.cpp
-//Version:V0.2
+//Version:V0.3
 //This is only a test for deck.h
 #include <iostream>
 #include <deque>

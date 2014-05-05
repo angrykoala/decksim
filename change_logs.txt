@@ -1,3 +1,9 @@
+V0.3:
+*changed pint to suit in all code (translation error)
+*added french deck to deck_generator
+*added german deck to deck_genertor
+
+
 V0.2:
 *added deck_gen, with some deck_config methods to generate decks
 *added write/read functions for deck_config

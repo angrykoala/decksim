@@ -1,6 +1,6 @@
 //Programmed by Demiurgos
 //Decksim: deck.h
-//Version:0.2
+//Version:0.3
 //Emulates a deck of cards
 #include "cio.h"
 #include "card.h"
@@ -16,14 +16,14 @@ public:
     //constructor from a deck_config
     deck(const deck_config &conf) {
         if(conf.check()==false) cout<<"Warning: deck_config check()==false\n";
-        if(conf.full_pint==true) { //generates a deck, filling each pint with a card for every value
-            for(unsigned int i=0; i<(conf.pints).size(); i++) {
+        if(conf.full_suit==true) { //generates a deck, filling each suit with a card for every value
+            for(unsigned int i=0; i<(conf.suits).size(); i++) {
                 for(unsigned int j=1; j<=conf.max_value; j++) {
                     if((conf.erased_numbers).find(j)==(conf.erased_numbers).end()) {
                         card c;
                         map<card_num,card_name>::const_iterator it;
                         c.num=j;
-                        c.pint=(conf.pints)[i];
+                        c.suit=(conf.suits)[i];
                         it=(conf.card_names).find(c.num);
                         if(it!=(conf.card_names).end()) c.name=(*it).second;
                         deck_cards.push_back(c);
@@ -32,12 +32,12 @@ public:
             }
         }
         else {
-            map<pint_name,vector<card_num> >::const_iterator it;
+            map<suit_name,vector<card_num> >::const_iterator it;
             for(it=(conf.deck_cards).begin(); it!=(conf.deck_cards).end(); it++) {
                 for(unsigned int i=0; i<((*it).second).size(); i++) {
                     card c;
                     c.num=((*it).second)[i];
-                    c.pint=(*it).first;
+                    c.suit=(*it).first;
                     map<card_num,card_name>::const_iterator it2;
                     it2=(conf.card_names).find(c.num);
                     if(it2!=(conf.card_names).end()) c.name=(*it2).second;
@@ -275,9 +275,9 @@ private:
             out<<"[";
             if((c.name).empty()==false) out<<c.name;
             else out<<c.num;
-            if((c.pint).empty()==false) {
+            if((c.suit).empty()==false) {
                 out<<",";
-                out<<c.pint;
+                out<<c.suit;
             }
             out<<"] ";
             if((i+1)%6==0) out<<endl;
