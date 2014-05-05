@@ -1,3 +1,12 @@
+V0.2:
+*added deck_gen, with some deck_config methods to generate decks
+*added write/read functions for deck_config
+*new file deck_config.h where deck_config is stored
+*added poker_deck and spanish deck to deck_gen
+*added new shuffles to deck.h (hindu and american)
+*added triple cuts (CAB,CBA,BCA))
+*added cio.h for read/write elements
+
 V 0.1:
 *struct deck_config to generate a deck of cards, added a constructor using deck_config
 *Struct card (number,name and pint) in card.h
