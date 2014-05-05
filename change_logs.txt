@@ -1,0 +1,10 @@
+V 0.1:
+*struct deck_config to generate a deck of cards, added a constructor using deck_config
+*Struct card (number,name and pint) in card.h
+*class deck to work with a deque of cards in deck.h
+*added basic manipulations to class deck:
+*-cut (removes top number of cards from a deck)
+*-cut and complete (removes top number of cards and puts at the bottom)
+*-overhand shuffle (emulates overhand shuffle or hindu shuffle, cut small packages from the top and put at top of new deck)
+*-riffle shuffle (emulates riffle shuffle, also called american shuffle)
+*-faro shuffle (riffle shuffle with error=0)

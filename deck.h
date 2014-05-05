@@ -1,52 +1,110 @@
-//Programmed by demiurgosoft
+//Programmed by Demiurgos
 //Decksim: deck.h
 //Version:beta 0.1
+//Emulates a deck of cards
 
-typedef unsigned short card_num;
-typedef string pint_name,card_name;
-
-struct card {
-    pint_name pint;
-    card_name name; //name of card, if it has
-    card_num num; //Number of card
-
-    bool operator==(const card &c) const {
+//information for generating a new deck
+struct deck_config {
+    map<card_num,card_name> card_names; //names of cards
+    set<card_num> erased_numbers; //numbers under max_value that are not in the deck
+    vector<pint_name> pints; //names of pints (in the order of the pint)
+    map<pint_name,vector<card_num> > deck_cards; //if full_pint==false, this map mark the cards in each pint
+    vector<card_name> extra_cards; //cards with no pint nor name (for example jokers)
+    string name; //name of configuration
+    card_num max_value; //max value of card per pint
+    bool full_pint; //true if each pint has all numbers of cards  (except erased_numbers)
+    //check if the deck config is correct
+    bool check()const {
         bool b=true;
-        if(pint!=c.pint) b=false;
-        else if(name!=c.name) b=false;
-        else if(num!=c.num) b=false;
+        if(full_pint==true && deck_cards.empty()==false) b=false;
+        else if(full_pint==false && pints.empty()==false) b=false;
+        else if(full_pint==false && deck_cards.empty()==true) b=false;
+        else if(full_pint==false && erased_numbers.empty()==true) b=false;
+        else if(erased_numbers.empty()==false) {
+            if((*(erased_numbers.begin()))<=0) b=false;
+            else if((*(erased_numbers.end()--))>max_value) b=false;
+        }
         return b;
     }
 };
-
-//creates a card
-card create_card(card_num num,const pint_name &pn) {
-    card c;
-    c.num=num;
-    c.pint=pn;
-    return c;
+//deck_config with full_pint=true
+deck_config generate_deck(const string &name,card_num max_value,const vector<pint_name> &pints,const map<card_num,card_name> &card_names,const set<card_num> &erased_numbers,const vector<card_name> &extra_cards) {
+    deck_config dc;
+    dc.full_pint=true;
+    dc.max_value=max_value;
+    dc.name=name;
+    dc.pints=pints;
+    dc.card_names=card_names;
+    dc.erased_numbers=erased_numbers;
+    dc.extra_cards=extra_cards;
+    if(dc.check()==false) cout<<"Warning: deck_config check()==false\n";
+    return dc;
 }
-//creates a card with name
-card create_card(card_num num,const pint_name &pn,const card_name &nam) {
-    card c;
-    c.num=num;
-    c.pint=pn;
-    c.name=nam;
+//deck_config with full_pint=false
+deck_config generate_deck(const string &name,const map<pint_name,vector<card_num> > &deck_cards,const map<card_num,card_name> &card_names,const vector<card_name> &extra_cards) {
+    deck_config dc;
+    dc.full_pint=false;
+    dc.name=name;
+    dc.deck_cards=deck_cards;
+    dc.card_names=card_names;
+    dc.extra_cards=extra_cards;
+    if(dc.check()==false) cout<<"Warning: deck_config check()==false\n";
+    return dc;
 }
 
 
-/*===================================================================================*/
-//a deck stores cards in a certain order
 class deck {
 private:
     deque<card> deck_cards;
 public:
+    //default constructor
     deck() {
     }
+    //constructor from a deck_config
+    deck(const deck_config &conf) {
+        if(conf.check()==false) cout<<"Warning: deck_config check()==false\n";
+        if(conf.full_pint==true) { //generates a deck, filling each pint with a card for every value
+            for(unsigned int i=0; i<(conf.pints).size(); i++) {
+                for(unsigned int j=1; j<=conf.max_value; j++) {
+                    if((conf.erased_numbers).find(j)==(conf.erased_numbers).end()) {
+                        card c;
+                        map<card_num,card_name>::const_iterator it;
+                        c.num=j;
+                        c.pint=(conf.pints)[i];
+                        it=(conf.card_names).find(c.num);
+                        if(it!=(conf.card_names).end()) c.name=(*it).second;
+                        deck_cards.push_back(c);
+                    }
+                }
+            }
+        }
+        else {
+            map<pint_name,vector<card_num> >::const_iterator it;
+            for(it=(conf.deck_cards).begin(); it!=(conf.deck_cards).end(); it++) {
+                for(unsigned int i=0; i<((*it).second).size(); i++) {
+                    card c;
+                    c.num=((*it).second)[i];
+                    c.pint=(*it).first;
+                    map<card_num,card_name>::const_iterator it2;
+                    it2=(conf.card_names).find(c.num);
+                    if(it2!=(conf.card_names).end()) c.name=(*it2).second;
+                    deck_cards.push_back(c);
+                }
+            }
+        }
+        //add extra cards (for example, jokers)
+        for(unsigned int i=0; i<(conf.extra_cards).size(); i++) {
+            card c;
+            c.name=(conf.extra_cards)[i];
+            deck_cards.push_back(c);
+        }
+    }
+    //constructor from a deque
     deck(const deque<card> &cards2) {
         deck_cards=cards2;
         check();
     }
+    //copy constructor
     deck(const deck &d) {
         (*this)=d;
     }
@@ -55,10 +113,10 @@ public:
     void clear() {
         deck_cards.clear();
     }
-    void add_card_bottom(const card &c) {
+    void add_bottom(const card &c) {
         deck_cards.push_back(c);
     }
-    void add_card_top(const card &c) {
+    void add_top(const card &c) {
         deck_cards.push_front(c);
     }
     //takes "top" card (erasing from deck)
@@ -128,33 +186,61 @@ public:
         }
     }
     //A shuffle makes by cutting and mixing 1-1 (+- err)
-    void american_shuffle(unsigned short err) {
+    //similar to american shuffle
+    void riffle_shuffle(unsigned short err) {
         deck d2=cut(size()/2,err); //cuts half the deck
-        american_merge(d2,err); //merge the two decks with american shuffle
+        riffle_merge(d2,err); //merge the two decks with american shuffle
     }
-    //small "cuts" that are placed down of a new deck,
+    //small "cuts" that are placed down of a new deck, similar to hindu shuffle
     //ncuts indicates the number of cuts made (< ncards), these cuts are not necessarily equal
-    void hindi_shuffle(unsigned short ncuts,unsigned short err) {
+    //similar to hindu shuffle
+    void overhand_shuffle(unsigned int ncuts,unsigned short err) {
+        unsigned int n;
+        unsigned int siz=size();
+        deck d2;
+        if(ncuts>siz) ncuts=siz; //the number of cuts should be <= than size
+        n=siz/ncuts; //number of cards per cut
+        while(size()>n) {
+            d2=cut(n,err)+d2; //cut some cards and put on top of deck 2
+        }
+        d2=(*this)+d2;
+        (*this)=d2;
     }
     //similar to american shuffle, but perfect mix
     void faro_shuffle() {
-        american_shuffle(0);
+        riffle_shuffle(0);
     }
 
     //merge two decks card by card (from bottom) (starts with first package)
     //err indicates the range from 1 to err+1
-    void american_merge(const deck &d2,unsigned short err) {
+    //d2 will be empty at the end of this
+    void riffle_merge(deck &d2,unsigned short err) {
         deque<card> dc;
         unsigned short n;
         deque<card>::iterator it1,it2;
-        while(d2.size()>0 && (*this).size()>0) {
+        while(d2.size()>0 && size()>0) {
             //first package
             n=rand()%(err+1)+1; //the error is in [1,err+1]
-            if(n>(*this).size())n=(*this).size();
-            //insert
+            if(n>size())n=size();
+            it2=deck_cards.end();
+            it1=it2-n;
+            dc.insert(dc.begin(),it1,it2);              //insert n cards in the new deck(at the bottom)
+            deck_cards.erase(it1,it2);
             //second package
             n=rand()%(err+1)+1; //the error is in [1,err+1]
             if(n>d2.size()) n=d2.size();
+            it2=(d2.deck_cards).end();
+            it1=it2-n;
+            dc.insert(dc.begin(),it1,it2);              //insert n cards in the new deck(at the bottom)
+            (d2.deck_cards).erase(it1,it2);
+        }
+        if(empty()==false) {
+            dc.insert(dc.begin(),deck_cards.begin(),deck_cards.end());
+            deck_cards.clear();
+        }
+        if(d2.empty()==false) {
+            dc.insert(dc.begin(),(d2.deck_cards).begin(),(d2.deck_cards).end());
+            (d2.deck_cards).clear();
         }
         deck_cards=dc;
     }
@@ -179,29 +265,13 @@ public:
     deck operator+(const deck &d2) const {
         deck d1(*this);
         d1.deck_cards.insert((d1.deck_cards).end(),(d2.deck_cards).begin(),(d2.deck_cards).end());
-        return (*this);
+        return d1;
     }
     deck &operator+=(const deck &d2) {
         deck_cards.insert(deck_cards.end(),(d2.deck_cards).begin(),(d2.deck_cards).end());
         return (*this);
     }
 
-
-
-    //operator <<
-    /*   ostream& operator<< (ostream &out, const deck &d2) {
-           unsigned int siz=d2.size();
-           for(unsigned int i=0;i<siz;i++){
-                        card c;
-                        c=d2.get_card(i);
-                        out<<"[";
-                        if((c.name).empty()==false) out<<c.name;
-                        else out<<c.num;
-                        out<<",";
-                        out<<c.pint;
-                        }
-           return out;
-       }*/
 private:
 
     //calculares a "random" number in [n-err,n+err] (always positive)
@@ -216,21 +286,24 @@ private:
         return n;
     }
     //operator <<, show the operations os the standard output
-    /*friend ostream  &operator<< (ostream &out, const deck &d2) {
+    friend ostream  &operator<< (ostream &out, const deck &d2) {
         unsigned int siz=d2.size();
-        for(unsigned int i=0;i<siz;i++){
-                     card c;
-                     c=d2.get_card(i);
-                     out<<"[";
-                     if((c.name).empty()==false) out<<c.name;
-                     else out<<c.num;
-                     out<<",";
-                     out<<c.pint;
-                     }
+        for(unsigned int i=0; i<siz; i++) {
+            card c;
+            c=d2.get_card(i);
+            out<<"[";
+            if((c.name).empty()==false) out<<c.name;
+            else out<<c.num;
+            if((c.pint).empty()==false) {
+                out<<",";
+                out<<c.pint;
+            }
+            out<<"] ";
+            if((i+1)%6==0) out<<endl;
+        }
         return out;
-    }*/
+    }
     //Check the deck is correct
     void check() const {
     }
 };
-
