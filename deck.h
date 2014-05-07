@@ -1,6 +1,6 @@
 //Programmed by Demiurgos
 //Decksim: deck.h
-//Version:0.3
+//Version:0.4
 //Emulates a deck of cards
 #include "cio.h"
 #include "card.h"
@@ -62,7 +62,6 @@ public:
         (*this)=d;
     }
     //MODIFICATION
-    //true if added
     void clear() {
         deck_cards.clear();
     }
@@ -86,10 +85,32 @@ public:
         deck_cards.pop_back();
         return c;
     }
+    //removes the card of pos p from the deck
+    card remove_card(unsigned int pos) {
+        card c;
+        if(pos<size()) {
+            c=deck_cards[pos];
+            deck_cards.erase(deck_cards.begin()+pos);
+        }
+        return c;
+    }
+    //changes the order of all the deck  (A-B-C  --> C-B-A)
+    void invert_order() {
+        unsigned int max=size()/2;
+        unsigned int j=size()-1;
+        card t;
+        for(unsigned int i=0; i<max; i++) {
+            t=deck_cards[i];
+            deck_cards[i]=deck_cards[j];
+            deck_cards[j]=t;
+            j--;
+        }
+    }
     //ACCESS
     unsigned int size() const {
         return deck_cards.size();
     }
+    //gets the information about the card, but dont remove the card
     card get_card(unsigned int pos) const {
         return deck_cards[pos];
     }
@@ -102,8 +123,25 @@ public:
     bool empty() const {
         return deck_cards.empty();
     }
+    //if exists a card
+    bool is_card(const card &c) const {
+        bool found=false;
+        deque<card>::const_iterator it;
+        for(it=deck_cards.begin(); it!=deck_cards.end() && found==false; it++) {
+            if(c==(*it)) found=true;
+        }
+        return found;
+    }
+    //if exists a card with the suit
+    bool is_suit(const suit_name &n) const {
+        bool found=false;
+        deque<card>::const_iterator it;
+        for(it=deck_cards.begin(); it!=deck_cards.end() && found==false; it++) {
+            if(n==(*it).suit) found=true;
+        }
+        return found;
+    }
     //JOBS
-
     //removes the top package of n cards (+- err)
     deck cut(unsigned int n,unsigned short err=0) {
         deck d2;
@@ -118,6 +156,11 @@ public:
         }
         return d2;
     }
+    deck half_cut(unsigned short err=0) {
+        deck d2;
+        d2=cut((size()/2),err);
+        return d2;
+    }
     //removes n cards from top and places down in the deck (+-err)
     void cut_and_complete(unsigned int n,unsigned short err=0) {
         deck d2;
@@ -125,22 +168,25 @@ public:
         (*this)+=d2; //put d2 at the end of the deck
     }
     //Divides the deck in the packs, A-B-C, and complete the deck changing the order of these
-    void triple_cut_CAB(unsigned int n,unsigned short err) {
+    void triple_cut_CAB(unsigned short err) {
         deck a,b;
+        unsigned int n=size()/3;
         a=cut(n,err);
         b=cut(n,err);
         a+=b; //A-B
         (*this)+=a; //C-A-B
     }
-    void triple_cut_CBA(unsigned int n,unsigned short err) {
+    void triple_cut_CBA(unsigned short err) {
         deck a,b;
+        unsigned int n=size()/3;
         a=cut(n,err);
         b=cut(n,err);
         b+=a; //B-A
         (*this)+=b; //C-B-A
     }
-    void triple_cut_BCA(unsigned int n,unsigned short err) {
+    void triple_cut_BCA(unsigned short err) {
         deck a,b;
+        unsigned int n=size()/3;
         a=cut(n,err);
         b=cut(n,err);
         (*this)=b+(*this); //B-C
@@ -162,7 +208,7 @@ public:
     //A shuffle makes by cutting and mixing 1-1 (+- err)
     //similar to american shuffle
     void riffle_shuffle(unsigned short err) {
-        deck d2=cut(size()/2,err); //cuts half the deck
+        deck d2=half_cut(err); //cuts half the deck
         riffle_merge(d2,err); //merge the two decks with american shuffle
     }
     //small "cuts" that are placed down of a new deck, similar to hindu shuffle
@@ -192,6 +238,7 @@ public:
     void american_shuffle(unsigned short err) {
         riffle_shuffle(err);
     }
+
     //merge two decks card by card (from bottom) (starts with first package)
     //err indicates the range from 1 to err+1
     //d2 will be empty at the end of this
@@ -225,7 +272,19 @@ public:
         }
         deck_cards=dc;
     }
-
+    //will add a card to the middle of the deck (+-err)
+    void add_to_the_middle(const card &c,unsigned short err) {
+        deck d2;
+        d2=half_cut(err); //cut the deck in the half
+        add_top(c); //add card
+        (*this)=d2+(*this); //put d2 over the card
+    }
+    void add_to_the_middle(const deck &d,unsigned short err) {
+        deck d2;
+        d2=half_cut(err);
+        (*this)=d2+(*this);
+        (*this)=d+(*this);
+    }
 
     //OPERATORS
     //operator==
@@ -252,9 +311,14 @@ public:
         deck_cards.insert(deck_cards.end(),(d2.deck_cards).begin(),(d2.deck_cards).end());
         return (*this);
     }
+    card &operator[](unsigned int pos) {
+        return deck_cards[pos];
+    }
+    const card &operator[](unsigned int pos)const {
+        return deck_cards[pos];
+    }
 
 private:
-
     //calculares a "random" number in [n-err,n+err] (always positive)
     unsigned int error_number(unsigned int n,unsigned int err) const {
         if(n!=0 && err!=0) { //if n==0, return 0,if err==0, return n
@@ -286,5 +350,6 @@ private:
     }
     //Check the deck is correct
     void check() const {
+        //Nothing here yet
     }
 };

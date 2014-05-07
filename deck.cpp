@@ -1,6 +1,6 @@
 //Programmed by Demiurgos
 //Decksim: deck.cpp
-//Version:V0.3
+//Version:V0.4
 //This is only a test for deck.h
 #include <iostream>
 #include <deque>
@@ -16,13 +16,9 @@ using namespace std;
 int main() {
     deck poker(poker_deck_generator(false));
     srand(time(NULL));
-    poker.random_shuffle();
     cout<<poker<<endl<<endl;
-    poker.faro_shuffle(); //makes a perfect faro
+    poker.invert_order();
     cout<<poker<<endl<<endl;
-    //  poker.overhand_shuffle(6,4);
-    //  cout<<poker<<endl<<endl;
-    cin.get();
     return 0;
 }
 

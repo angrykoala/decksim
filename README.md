@@ -1,4 +1,4 @@
-decksim V0.1
+decksim V0.4
 ============
 Programmed by Demiurgosoft
 

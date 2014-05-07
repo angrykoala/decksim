@@ -1,6 +1,6 @@
 //Programmed by Demiurgos
 //Decksim: deck_config.h
-//Version:0.3
+//Version:0.4
 //Stores the information to generate a deck of cards
 
 struct deck_config {

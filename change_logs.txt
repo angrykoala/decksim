@@ -1,8 +1,17 @@
+V0.4:
+*added half_cut and add_to_the_middle to deck class
+*american shuffle now use half_cut instead of cut
+*added methods to extract cards from the middle of the deck
+*added operator [] to deck class
+*added invert_order to deck class, wich invert the order of all cards (A-B-C-D  --> D-C-B-A)
+**bug with triple cuts fixed
+
+
+
 V0.3:
 *changed pint to suit in all code (translation error)
 *added french deck to deck_generator
 *added german deck to deck_genertor
-
 
 V0.2:
 *added deck_gen, with some deck_config methods to generate decks

@@ -18,6 +18,11 @@ struct card {
         else if(num!=c.num) b=false;
         return b;
     }
+    //dont check num!!
+    bool null() const {
+        if(suit.empty()==true && name.empty()==true) return true;
+        else return false;
+    }
 };
 
 //creates a card
