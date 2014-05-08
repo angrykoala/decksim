@@ -1,6 +1,6 @@
 //Programmed by Demiurgos
 //Decksim: card.h
-//Version:0.3
+//Version:0.5
 //Stores the information of a card
 
 typedef unsigned short card_num;
@@ -24,6 +24,16 @@ struct card {
         else return false;
     }
 };
+ostream  &operator<< (ostream &out, const card &c) {
+    out<<"[";
+    if((c.name).empty()==false) out<<c.name;
+    else out<<c.num;
+    if((c.suit).empty()==false) {
+        out<<",";
+        out<<c.suit;
+    }
+    out<<"] ";
+}
 
 //creates a card
 card create_card(card_num num,const suit_name &pn) {

@@ -1,6 +1,6 @@
 //Programmed by Demiurgos
 //Decksim: deck_config.h
-//Version:0.4
+//Version:0.5
 //Stores the information to generate a deck of cards
 
 struct deck_config {
@@ -28,12 +28,34 @@ struct deck_config {
     //I/O
     //write the basic unit in a binary file
     void write(ofstream &out) const {
-        // if(check()==false) cout<<"Warning, check failed when writting deck_config\n";
-        //TODO
+        if(check()==false) cout<<"Warning, check failed when writting deck_config\n";
+        binary_write(name,out); //writes name
+        binary_write(full_suit,out); //writes full_suit
+        binary_write(max_value,out); //writes max_value
+        binary_write(extra_cards,out); //writes extra cards vector
+        binary_write(card_names,out);
+        if(full_suit==true) {
+            binary_write(suits,out);
+            binary_write(erased_numbers,out);
+        }
+        else {
+            binary_write(deck_cards,out);
+        }
     }
     void read(ifstream &input) {
-        //TODO
-        // if(check()==false) cout<<"Warning, check failed when reading deck_config\n";
+        binary_read(name,input); //writes name
+        binary_read(full_suit,input); //writes full_suit
+        binary_read(max_value,input); //writes max_value
+        binary_read(extra_cards,input); //writes extra cards vector
+        binary_read(card_names,input);
+        if(full_suit==true) {
+            binary_read(suits,input);
+            binary_read(erased_numbers,input);
+        }
+        else {
+            binary_read(deck_cards,input);
+        }
+        if(check()==false) cout<<"Warning, check failed when reading deck_config\n";
     }
 };
 //deck_config with full_suit=true

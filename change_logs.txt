@@ -1,3 +1,12 @@
+V0.5:
+*added operators + between cards and decks (deck+card and card+deck)
+*added operator -- for deck (--deck,deck--) to remove one card
+*added << operator for card, and changed deck << operator according to card<<
+*added = constructor from a card (deck=card creates a deck with one card)
+*added operator + between card (returns a deck)
+*added write/out for deck_config and for deck class
+**added new templates to cio.h (now version 1.1)
+ 
 V0.4:
 *added half_cut and add_to_the_middle to deck class
 *american shuffle now use half_cut instead of cut
@@ -6,8 +15,6 @@ V0.4:
 *added invert_order to deck class, wich invert the order of all cards (A-B-C-D  --> D-C-B-A)
 *added take cards to deck.h (similar to cut with error=0)
 **bug with triple cuts fixed
-
-
 
 V0.3:
 *changed pint to suit in all code (translation error)

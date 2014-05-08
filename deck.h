@@ -1,8 +1,8 @@
 //Programmed by Demiurgos
 //Decksim: deck.h
-//Version:0.4
+//Version:0.5
 //Emulates a deck of cards
-#include "cio.h"
+#include "cbio.h"
 #include "card.h"
 #include "deck_config.h"
 #include "deck_gen.h"
@@ -61,6 +61,10 @@ public:
     deck(const deck &d) {
         (*this)=d;
     }
+    //constructor from one card
+    deck(const card &c) {
+        (*this)=c;
+    }
     //MODIFICATION
     void clear() {
         deck_cards.clear();
@@ -93,18 +97,6 @@ public:
             deck_cards.erase(deck_cards.begin()+pos);
         }
         return c;
-    }
-    //changes the order of all the deck  (A-B-C  --> C-B-A)
-    void invert_order() {
-        unsigned int max=size()/2;
-        unsigned int j=size()-1;
-        card t;
-        for(unsigned int i=0; i<max; i++) {
-            t=deck_cards[i];
-            deck_cards[i]=deck_cards[j];
-            deck_cards[j]=t;
-            j--;
-        }
     }
     //ACCESS
     unsigned int size() const {
@@ -166,6 +158,18 @@ public:
         deck d2;
         d2=cut(n,err); //cuts the deck
         (*this)+=d2; //put d2 at the end of the deck
+    }
+    //changes the order of all the deck  (A-B-C  --> C-B-A)
+    void invert_order() {
+        unsigned int max=size()/2;
+        unsigned int j=size()-1;
+        card t;
+        for(unsigned int i=0; i<max; i++) {
+            t=deck_cards[i];
+            deck_cards[i]=deck_cards[j];
+            deck_cards[j]=t;
+            j--;
+        }
     }
     //takes n cards (similar to cut wuth err=0)
     deck take_cards(unsigned int n) {
@@ -290,6 +294,16 @@ public:
         (*this)=d+(*this);
     }
 
+    void write(ofstream &out) const {
+        check();
+        binary_write(deck_cards,out);
+    }
+    void read(ifstream &input) {
+        binary_read(deck_cards,input);
+        check();
+    }
+
+
     //OPERATORS
     //operator==
     bool operator==(const deck &d2) const {
@@ -301,19 +315,50 @@ public:
     }
     // operator=
     deck &operator=(const deck &d2) {
+        clear();
         if(this!=&d2) deck_cards=d2.deck_cards;
         return (*this);
     }
-    //operator +,+=
+    //creates a deck from one card
+    deck &operator=(const card &c) {
+        clear();
+        add_top(c);
+        return (*this);
+    }
+    //operator +
     //add the second deck at the end of the first
     deck operator+(const deck &d2) const {
         deck d1(*this);
         d1.deck_cards.insert((d1.deck_cards).end(),(d2.deck_cards).begin(),(d2.deck_cards).end());
         return d1;
     }
+    //add a card to the bottom (deck+card)
+    deck operator+(const card &c) const {
+        deck d(*this);
+        d.add_bottom(c);
+        return d;
+    }
+    //add the second deck at the end of the first
     deck &operator+=(const deck &d2) {
-        deck_cards.insert(deck_cards.end(),(d2.deck_cards).begin(),(d2.deck_cards).end());
+        if(this!=&d2)
+            deck_cards.insert(deck_cards.end(),(d2.deck_cards).begin(),(d2.deck_cards).end());
         return (*this);
+    }
+    //deck+=card; add card to the bottom
+    deck &operator+=(const card &c) {
+        add_bottom(c);
+        return (*this);
+    }
+    //--deck removes the first card
+    deck &operator--() {
+        take_card();
+        return (*this);
+    }
+    //deck-- removes the last card
+    deck operator--(int) {
+        deck d(*this);
+        take_bottom_card();
+        return d;
     }
     card &operator[](unsigned int pos) {
         return deck_cards[pos];
@@ -323,6 +368,17 @@ public:
     }
 
 private:
+    //operator <<, show the operations os the standard output
+    friend ostream  &operator<< (ostream &out, const deck &d2) {
+        unsigned int siz=d2.size();
+        for(unsigned int i=0; i<siz; i++) {
+            card c;
+            c=d2.get_card(i);
+            out<<c;
+            if((i+1)%6==0) out<<endl;
+        }
+        return out;
+    }
     //calculares a "random" number in [n-err,n+err] (always positive)
     unsigned int error_number(unsigned int n,unsigned int err) const {
         if(n!=0 && err!=0) { //if n==0, return 0,if err==0, return n
@@ -334,26 +390,21 @@ private:
         }
         return n;
     }
-    //operator <<, show the operations os the standard output
-    friend ostream  &operator<< (ostream &out, const deck &d2) {
-        unsigned int siz=d2.size();
-        for(unsigned int i=0; i<siz; i++) {
-            card c;
-            c=d2.get_card(i);
-            out<<"[";
-            if((c.name).empty()==false) out<<c.name;
-            else out<<c.num;
-            if((c.suit).empty()==false) {
-                out<<",";
-                out<<c.suit;
-            }
-            out<<"] ";
-            if((i+1)%6==0) out<<endl;
-        }
-        return out;
-    }
     //Check the deck is correct
     void check() const {
         //Nothing here yet
     }
 };
+
+//generates a deck from two cards
+deck operator+(const card &c1,const card &c2) {
+    deck d(c1);
+    d.add_bottom(c2);
+    return d;
+}
+//add card to the top (card+deck)
+deck operator+(const card &c, const deck &b) {
+    deck d(b);
+    d.add_top(c);
+    return d;
+}
