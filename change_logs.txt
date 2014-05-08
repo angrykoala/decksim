@@ -4,6 +4,7 @@ V0.4:
 *added methods to extract cards from the middle of the deck
 *added operator [] to deck class
 *added invert_order to deck class, wich invert the order of all cards (A-B-C-D  --> D-C-B-A)
+*added take cards to deck.h (similar to cut with error=0)
 **bug with triple cuts fixed
 
 

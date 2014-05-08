@@ -167,6 +167,10 @@ public:
         d2=cut(n,err); //cuts the deck
         (*this)+=d2; //put d2 at the end of the deck
     }
+    //takes n cards (similar to cut wuth err=0)
+    deck take_cards(unsigned int n) {
+        return cut(n,0);
+    }
     //Divides the deck in the packs, A-B-C, and complete the deck changing the order of these
     void triple_cut_CAB(unsigned short err) {
         deck a,b;
