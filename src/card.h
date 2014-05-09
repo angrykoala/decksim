@@ -33,6 +33,7 @@ ostream  &operator<< (ostream &out, const card &c) {
         out<<c.suit;
     }
     out<<"] ";
+    return out;
 }
 
 //creates a card
