@@ -1,8 +1,11 @@
 /* (C) Programmed by:Demiurgos  */
 //Version:1.2
-//
+//Binary read and write overloaded templates for STL Containers
 
-//max size of containers
+//max size of containers (this size is the biggest size that could be written, increasing this value (i.e unsigned int) will increase
+//the maximun size and the actual size of the binary file
+//This value will always be positive, always write an unsigned value to economise size of written file
+//WARNING:max_size value should be the same when reading and writting
 typedef unsigned short max_size;
 //Writes an element in a binary file
 //TEMPLATES R/W
@@ -153,7 +156,6 @@ void binary_read(deque<T> &v,ifstream &input) {
     }
 }
 
-//map<card_num,card_name> card_names; //names of cards
 //MAP R/W
 template <typename T,typename K>
 void binary_write(const map<K,T> &m,ofstream &out) {

@@ -1,6 +1,6 @@
 //Programmed by Demiurgos
 //Decksim: deck.h
-//Version:0.5.1
+//Version:0.6
 //Emulates a deck of cards
 #include "rwbin.h"
 #include "card.h"
@@ -125,13 +125,75 @@ public:
         return found;
     }
     //if exists a card with the suit
-    bool is_suit(const suit_name &n) const {
+    bool is_suit(const suit_name n) const {
         bool found=false;
         deque<card>::const_iterator it;
         for(it=deck_cards.begin(); it!=deck_cards.end() && found==false; it++) {
             if(n==(*it).suit) found=true;
         }
         return found;
+    }
+    //returns the number of cards with the given values
+    unsigned int count(card_num number)const {
+        unsigned int n=0;
+        unsigned int siz=size();
+        for(unsigned int i=0; i<siz; i++)
+            if(deck_cards[i].num==number) n++;
+        return n;
+    }
+    unsigned int count(suit_name s) const {
+        unsigned int n=0;
+        unsigned int siz=size();
+        for(unsigned int i=0; i<siz; i++)
+            if(deck_cards[i].suit==s) n++;
+        return n;
+    }
+    //number of extra cards (dont have suit)
+    unsigned int count_extra_cards() const {
+        unsigned int n=0;
+        unsigned int siz=size();
+        for(unsigned int i=0; i<siz; i++)
+            if(deck_cards[i].is_extra_card()) n++;
+        return n;
+    }
+    //removes all card without suit
+    deck remove_extra_cards() {
+        deck d;
+        for(unsigned int i=0; i<deck_cards.size(); i++) {
+            card c=deck_cards[i];
+            if(c.is_extra_card()==true) {
+                d.add_top(c);
+                deck_cards.erase(deck_cards.begin()+i);
+                i--;
+            }
+        }
+        return d;
+    }
+    //removes all the card with a number
+    deck remove(card_num number) {
+        deck d;
+        for(unsigned int i=0; i<deck_cards.size(); i++) {
+            card c=deck_cards[i];
+            if(c.num==number) {
+                d.add_top(c);
+                deck_cards.erase(deck_cards.begin()+i);
+                i--;
+            }
+        }
+        return d;
+    }
+    //removes all the cards with suit s
+    deck remove(suit_name s) {
+        deck d;
+        for(unsigned int i=0; i<deck_cards.size(); i++) {
+            card c=deck_cards[i];
+            if(c.suit==s) {
+                d.add_top(c);
+                deck_cards.erase(deck_cards.begin()+i);
+                i--;
+            }
+        }
+        return d;
     }
     //JOBS
     //removes the top package of n cards (+- err)
@@ -225,6 +287,7 @@ public:
     //small "cuts" that are placed down of a new deck, similar to hindu shuffle
     //ncuts indicates the number of cuts made (< ncards), these cuts are not necessarily equal
     //similar to hindu shuffle
+    //overhand shuffle makes the "Faced Down" shuffle
     void overhand_shuffle(unsigned int ncuts,unsigned short err) {
         unsigned int n;
         unsigned int siz=size();
@@ -296,7 +359,6 @@ public:
         (*this)=d2+(*this);
         (*this)=d+(*this);
     }
-
     void write(ofstream &out) const {
         check();
         binary_write(deck_cards,out);
@@ -305,7 +367,6 @@ public:
         binary_read(deck_cards,input);
         check();
     }
-
 
     //OPERATORS
     //operator==

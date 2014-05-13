@@ -1,3 +1,9 @@
+V 0.6:
+*added count methods to count the number of certain card in a deck
+*added remove methods to deck
+*added is_extra_card method to card, returns true if the card is an extra card like a joker (this is true if the card don have suit)
+
+
 V0.5.1:
 *added random_shuffle(n) to repeat a random shuffle n times
 *small code style changes

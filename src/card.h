@@ -1,6 +1,6 @@
 //Programmed by Demiurgos
 //Decksim: card.h
-//Version:0.5.1
+//Version:0.6
 //Stores the information of a card
 
 typedef unsigned short card_num;
@@ -17,6 +17,9 @@ struct card {
         else if(name!=c.name) b=false;
         else if(num!=c.num) b=false;
         return b;
+    }
+    bool is_extra_card() const {
+        return suit.empty();
     }
     //dont check num!!
     bool null() const {

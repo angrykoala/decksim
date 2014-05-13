@@ -25,7 +25,7 @@ struct deck_config {
         }
         return b;
     }
-    //I/O FIXME
+    //I/O
     //write the basic unit in a binary file
     void write(ofstream &out) const {
         if(check()==false) cout<<"Warning, check failed when writting deck_config\n";
