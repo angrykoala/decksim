@@ -1,5 +1,5 @@
-decksim V0.5
-============
+decksim V0.5.1
+==============
 Programmed by Demiurgosoft
 
 Deck simulator with real shufle methods to emulate a real deck, for any type of deck and game
@@ -9,7 +9,7 @@ deck_config.h: stores the minimun data required to generate a full deck of cards
 deck.h: a deck is stored as a deque of cards, deck class implements all necessary methods to create and modify a deck of cards, as well as the different emulation of shuffles and techniques with a real deck
 deck_gen.h: different pre-programmed decks to test deck.h
 
-decksim uses cbio.h v1.1, as binary input/output methods for read/writing
+decksim uses cbio.h v1.2, as binary methods for read/writing
 
 The different pre-programmed decks included in deck_config.h for testing are:
 Poker deck: standard poker deck with 52 cards in 4 suits, with all the cards from ace to K, with option to add 2Jokers as extra cards

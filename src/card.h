@@ -1,6 +1,6 @@
 //Programmed by Demiurgos
 //Decksim: card.h
-//Version:0.5
+//Version:0.5.1
 //Stores the information of a card
 
 typedef unsigned short card_num;

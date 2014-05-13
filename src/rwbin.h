@@ -1,25 +1,57 @@
-/* (C) Programmed by:
-   Antonio Jimenez Martínez
-   Andrés Ortiz Corrales
-   Mariano Palomo Villafranca  */
-//Version:1.1
-//Binary input-output functions and templates
+/* (C) Programmed by:Demiurgos  */
+//Version:1.2
+//
 
 //max size of containers
 typedef unsigned short max_size;
-
 //Writes an element in a binary file
+//TEMPLATES R/W
+template <typename T>
+void binary_write(const T &element,ofstream &out);
+template <typename T>
+void binary_read(T &element,ifstream &input);
+//PAIR R/W
+template <typename T,typename P>
+void binary_write(const pair<T,P> &element,ofstream &out);
+template <typename T,typename P>
+void binary_read(pair<T,P> &element,ifstream &input);
+//VECTOR R/W
+template <typename T>
+void binary_write(const vector<T> &v,ofstream &out);
+template <typename T>
+void binary_read(vector<T> &v,ifstream &input);
+//STRING R/W
+void binary_write(const string &element,ofstream &out);
+void binary_read(string &element,ifstream &input);
+//SET R/W
+template <typename T>
+void binary_write(const set<T> &v,ofstream &out);
+template <typename T>
+void binary_read(set<T> &v,ifstream &input);
+//DEQUE R/W
+template <typename T>
+void binary_write(const deque<T> &v,ofstream &out);
+template <typename T>
+void binary_read(deque<T> &v,ifstream &input);
+//MAP R/W
+template <typename T,typename K>
+void binary_write(const map<K,T> &m,ofstream &out);
+template <typename T,typename K>
+void binary_read(map<K,T> &m,ifstream &input);
+
+
+//TEMPLATES R/W
 template <typename T>
 void binary_write(const T &element,ofstream &out) {
     out.write((char *)&element,sizeof(T));
 }
 //Reads an element from a binary file
 template <typename T>
-void binary_read(const T &element,ifstream &input) {
+void binary_read(T &element,ifstream &input) {
     input.read((char *) &element,sizeof(T));
 }
 
-//PAIR I/O
+//PAIR R/W
 //Writes a pair in a binary file
 template <typename T,typename P>
 void binary_write(const pair<T,P> &element,ofstream &out) {
@@ -28,12 +60,12 @@ void binary_write(const pair<T,P> &element,ofstream &out) {
 }
 //Reads a pair from a binary file
 template <typename T,typename P>
-void binary_read(const pair<T,P> &element,ifstream &input) {
+void binary_read(pair<T,P> &element,ifstream &input) {
     binary_read(element.first,input);
     binary_read(element.second,input);
 }
 
-//VECTOR I/O
+//VECTOR R/W
 //Writes a vector in a binary file, it writes the size of the vector first (unsigned)
 template <typename T>
 void binary_write(const vector<T> &v,ofstream &out) {
@@ -58,7 +90,7 @@ void binary_read(vector<T> &v,ifstream &input) {
         v.push_back(elem);
     }
 }
-//STRING I/O
+//STRING R/W
 //Read/Write string cases (usign a write as a vector)
 void binary_write(const string &element,ofstream &out) {
     vector<char> data(element.begin(), element.end());
@@ -72,8 +104,7 @@ void binary_read(string &element,ifstream &input) {
     string str(data.begin(),data.end());
     element=str;
 }
-
-//SET I/O
+//SET R/W
 template <typename T>
 void binary_write(const set<T> &v,ofstream &out) {
     max_size siz=v.size();
@@ -97,7 +128,7 @@ void binary_read(set<T> &v,ifstream &input) {
         v.insert(elem);
     }
 }
-//DEQUE I/O
+//DEQUE R/W
 template <typename T>
 void binary_write(const deque<T> &v,ofstream &out) {
     max_size siz=v.size();
@@ -122,14 +153,14 @@ void binary_read(deque<T> &v,ifstream &input) {
     }
 }
 
-
-//MAP I/O
+//map<card_num,card_name> card_names; //names of cards
+//MAP R/W
 template <typename T,typename K>
 void binary_write(const map<K,T> &m,ofstream &out) {
     max_size siz=m.size();
+    binary_write(siz,out); //writes map size
     typename map<K,T>::const_iterator it;
     pair<K,T> elem;
-    binary_write(siz,out); //writes map size
     for(it=m.begin(); it!=m.end(); it++) {
         elem=*it;
         binary_write(elem,out); //writes each pair of elements

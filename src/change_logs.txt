@@ -1,3 +1,8 @@
+V0.5.1:
+*added random_shuffle(n) to repeat a random shuffle n times
+*small code style changes
+*Updated cbio to v1.2, name changed to rwbin.h
+**Bug when reading/writing deck_config fixed
 V0.5:
 *added operators + between cards and decks (deck+card and card+deck)
 *added operator -- for deck (--deck,deck--) to remove one card

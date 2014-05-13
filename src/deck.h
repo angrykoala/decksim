@@ -1,8 +1,8 @@
 //Programmed by Demiurgos
 //Decksim: deck.h
-//Version:0.5
+//Version:0.5.1
 //Emulates a deck of cards
-#include "cbio.h"
+#include "rwbin.h"
 #include "card.h"
 #include "deck_config.h"
 #include "deck_gen.h"
@@ -202,7 +202,6 @@ public:
     }
     //makes a fair shuffle to the deck (completely random) (Fisher-yates shuffle)
     void random_shuffle() {
-        //srand(time(NULL)); //new seed;
         unsigned int siz=size();
         card c;
         unsigned int r;
@@ -212,6 +211,10 @@ public:
             deck_cards[i]=deck_cards[r];
             deck_cards[r]=c;
         }
+    }
+    //repeat random_shuffle n times
+    void random_shuffle(unsigned int n) {
+        for(unsigned int i=0; i<n; i++) random_shuffle();
     }
     //A shuffle makes by cutting and mixing 1-1 (+- err)
     //similar to american shuffle

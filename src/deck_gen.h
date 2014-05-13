@@ -1,6 +1,6 @@
 //Programmed by Demiurgos
 //Decksim: Deck Generators
-//Version:0.4
+//Version:0.5.1
 //Some deck generators
 
 //generates a full poker deck to test deck class

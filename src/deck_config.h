@@ -1,6 +1,6 @@
 //Programmed by Demiurgos
 //Decksim: deck_config.h
-//Version:0.5
+//Version:0.5.1
 //Stores the information to generate a deck of cards
 
 struct deck_config {
@@ -25,7 +25,7 @@ struct deck_config {
         }
         return b;
     }
-    //I/O
+    //I/O FIXME
     //write the basic unit in a binary file
     void write(ofstream &out) const {
         if(check()==false) cout<<"Warning, check failed when writting deck_config\n";
@@ -33,7 +33,7 @@ struct deck_config {
         binary_write(full_suit,out); //writes full_suit
         binary_write(max_value,out); //writes max_value
         binary_write(extra_cards,out); //writes extra cards vector
-        binary_write(card_names,out);
+        binary_write(card_names,out); //writes card_names
         if(full_suit==true) {
             binary_write(suits,out);
             binary_write(erased_numbers,out);
@@ -43,17 +43,17 @@ struct deck_config {
         }
     }
     void read(ifstream &input) {
-        binary_read(name,input); //writes name
-        binary_read(full_suit,input); //writes full_suit
-        binary_read(max_value,input); //writes max_value
-        binary_read(extra_cards,input); //writes extra cards vector
-        binary_read(card_names,input);
+        binary_read(name,input); //reads name
+        binary_read(full_suit,input); //reads full_suit
+        binary_read(max_value,input); //reads max_value
+        binary_read(extra_cards,input); //reads extra cards vector
+        binary_read(card_names,input); //reads card_names
         if(full_suit==true) {
-            binary_read(suits,input);
-            binary_read(erased_numbers,input);
+            binary_read(suits,input); //reads suits
+            binary_read(erased_numbers,input); //reads erased_numbers
         }
         else {
-            binary_read(deck_cards,input);
+            binary_read(deck_cards,input); //reads deck_cards
         }
         if(check()==false) cout<<"Warning, check failed when reading deck_config\n";
     }
