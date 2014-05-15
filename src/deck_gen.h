@@ -1,6 +1,6 @@
 //Programmed by Demiurgos
 //Decksim: Deck Generators
-//Version:0.5.1
+//Version:0.6.1
 //Some deck generators
 
 //generates a full poker deck to test deck class
@@ -95,4 +95,23 @@ deck_config german_deck_generator() {
     erased.insert(5);
     vector<card_name> extra;
     return generate_deck(n,max,p,m,erased,extra);
+}
+
+//Japanese Hanafuda deck of 48 cards
+deck_config hanafuda_deck_generator() {
+    string n="Hanafuda";
+    map<suit_name,vector<card_num> > cards;
+    //cards.insert(make_pair("Enero",);//vector de cartas
+    map<card_num,card_name> cnames;
+    cnames.insert(make_pair(1,"Basica"));
+    cnames.insert(make_pair(2,"Tierra")); //Tierra no ino-shika-cho
+    cnames.insert(make_pair(3,"Cinta Roja")); //cinta roja (simple)
+    cnames.insert(make_pair(4,"Tierra")); //Tierra ino-shika-cho
+    cnames.insert(make_pair(5,"Cinta Azul")); //Cinta azul
+    cnames.insert(make_pair(6,"Cinta poetica")); //Cinta roja poetica
+    cnames.insert(make_pair(7,"Sake")); //copa de sake
+    cnames.insert(make_pair(8,"Luz Mojada")); //Luz mojada
+    cnames.insert(make_pair(9,"Luz Seca"));
+    vector<card_name> extra;
+    return generate_deck(n,cards,cnames,extra);
 }

@@ -1,14 +1,21 @@
+V 0.6.1:
+*defined cards_hand and cards_pack as a deck (in deck.h)
+**BUG:Generators from a not full_suit deck dont stores suit order 
+***rwbin.h udated to version 2
+****(rwbin added some precompiler options to compile depending on included containers)
+****binary_write(string) changed to avoid dependence on binary_write(vector)
+
 V 0.6:
 *added count methods to count the number of certain card in a deck
 *added remove methods to deck
 *added is_extra_card method to card, returns true if the card is an extra card like a joker (this is true if the card don have suit)
-
 
 V0.5.1:
 *added random_shuffle(n) to repeat a random shuffle n times
 *small code style changes
 *Updated cbio to v1.2, name changed to rwbin.h
 **Bug when reading/writing deck_config fixed
+
 V0.5:
 *added operators + between cards and decks (deck+card and card+deck)
 *added operator -- for deck (--deck,deck--) to remove one card

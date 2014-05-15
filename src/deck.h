@@ -1,6 +1,6 @@
 //Programmed by Demiurgos
 //Decksim: deck.h
-//Version:0.6
+//Version:0.6.1
 //Emulates a deck of cards
 #include "rwbin.h"
 #include "card.h"
@@ -459,6 +459,7 @@ private:
         //Nothing here yet
     }
 };
+typedef deck cards_pack,cards_hand; //define a pack and a cards_hand as a deck
 
 //generates a deck from two cards
 deck operator+(const card &c1,const card &c2) {

@@ -14,13 +14,13 @@ using namespace std;
 #include "deck.h"
 
 int main() {
-    deck_config cnf=poker_deck_generator(true); //Generates full poker deck configuration (with jokers) using generator
+    deck_config cnf=poker_deck_generator(false); //Generates full poker deck configuration (with jokers) using generator
     deck poker(cnf); //generates de deck using configuration
-    cout<<poker<<endl; //show the deck
+    cout<<poker<<endl<<endl;
     poker.american_shuffle(4); //american shuffle with 4 cards error
-    poker.remove("Spades"); //removes all the cards that are of spades
-    cout<<poker<<endl;
-    cout<<poker.count("Hearts")<<endl; //counts all the heart cards (should be 13)
-    cin.get();
+    deck d2;
+    d2=poker.cut(26);
+    cout<<poker<<endl<<endl; //show the deck
+    cout<<d2<<endl;
 }
 
