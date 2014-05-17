@@ -1,4 +1,7 @@
 V 0.6.1:
+*rwbin.h modified from version 2 to work properly in decksim (erased precompiler macros)
+
+V 0.6.1:
 *defined cards_hand and cards_pack as a deck (in deck.h)
 **BUG:Generators from a not full_suit deck dont stores suit order 
 ***rwbin.h udated to version 2

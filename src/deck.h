@@ -1,6 +1,6 @@
 //Programmed by Demiurgos
 //Decksim: deck.h
-//Version:0.6.1
+//Version:0.6.2
 //Emulates a deck of cards
 #include "rwbin.h"
 #include "card.h"

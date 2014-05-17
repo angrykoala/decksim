@@ -1,6 +1,6 @@
-decksim V0.6.1
+decksim V0.6.2
 ==============
-Programmed by Demiurgosoft
+Programmed by Demiurgos
 
 Deck simulator with real shufle methods to emulate a real deck, for any type of deck and game
 
@@ -10,14 +10,13 @@ deck.h: a deck is stored as a deque of cards, deck class implements all necessar
 *types cards_hand and cards_packs are defined as decks
 deck_gen.h: different pre-programmed decks to test deck.h
 
-decksim uses rwbin.h v2, as binary methods for read/writing
+decksim uses a modified version of rwbin.h v2, as binary methods for read/writing
 
 The different pre-programmed decks included in deck_config.h for testing are:
 Poker deck: standard poker deck with 52 cards in 4 suits, with all the cards from ace to K, with option to add 2Jokers as extra cards
 Spanish_deck: spanish deck with 48 cards in 4 suits, from 1 to Rey cards, with option to add 2 comodines as extra cards and remove 8-9 cards to generate a 40-cards deck spanish deck
 French deck: similar to a poker deck, with different options and without jokers
 German deck: deck with 36 cards in 4 suits, cards from 6 to 14(Daus)
-
 
 
 Some of the methods implemented in deck class to emulate real card manipulations are:
