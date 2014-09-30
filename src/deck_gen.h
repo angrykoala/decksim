@@ -1,6 +1,6 @@
 //Programmed by Demiurgos
 //Decksim: Deck Generators
-//Version:0.6.2
+//Version:0.7
 //Some deck generators
 
 //generates a full poker deck to test deck class
@@ -97,6 +97,7 @@ deck_config german_deck_generator() {
     return generate_deck(n,max,p,m,erased,extra);
 }
 
+/* not finished generator
 //Japanese Hanafuda deck of 48 cards
 deck_config hanafuda_deck_generator() {
     string n="Hanafuda";
@@ -114,4 +115,4 @@ deck_config hanafuda_deck_generator() {
     cnames.insert(make_pair(9,"Luz Seca"));
     vector<card_name> extra;
     return generate_deck(n,cards,cnames,extra);
-}
+}*/

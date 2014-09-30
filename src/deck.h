@@ -1,7 +1,9 @@
 //Programmed by Demiurgos
 //Decksim: deck.h
-//Version:0.6.2
+//Version:0.7
 //Emulates a deck of cards
+
+
 #include "rwbin.h"
 #include "card.h"
 #include "deck_config.h"
@@ -233,7 +235,7 @@ public:
             j--;
         }
     }
-    //takes n cards (similar to cut wuth err=0)
+    //takes n cards (similar to cut with err=0)
     deck take_cards(unsigned int n) {
         return cut(n,0);
     }
@@ -262,7 +264,7 @@ public:
         (*this)=b+(*this); //B-C
         (*this)+=a; //B-C-A
     }
-    //makes a fair shuffle to the deck (completely random) (Fisher-yates shuffle)
+    //makes a fair shuffle to the deck (completely random) (Fisher-Yates shuffle)
     void random_shuffle() {
         unsigned int siz=size();
         card c;
@@ -312,7 +314,37 @@ public:
     void american_shuffle(unsigned short err) {
         riffle_shuffle(err);
     }
+    //reverse the faro shuffle
+    void antifaro() {
+        vector<deck> vdeck(2);
+        unsigned int siz=size();
+        unsigned int k;
+        for(int i=0; i<siz; i++) {
+            k=i%2;
+            vdeck[k].add_bottom(take_card());
+        }
+        (*this)=vdeck[0]+vdeck[1];
+    }
 
+    //deal ncards in ndecks different decks,returned as vector (one by one)
+    //deal will make this deck empty
+    vector<deck> deal(unsigned int ncards,unsigned int ndecks) {
+        vector<deck> vdeck(ndecks);
+        if(ncards>size()) ncards=size();
+        if(ndecks>0) {
+            unsigned int k;
+            for(unsigned int i=0; i<ncards; i++) {
+                k=i%ndecks;
+                vdeck[k].add_top(take_card()); //add to top the first card in deck
+            }
+        }
+        return vdeck;
+    }
+
+    //deal all the cards
+    vector<deck>  deal(unsigned int ndecks) {
+        return deal(size(),ndecks);
+    }
     //merge two decks card by card (from bottom) (starts with first package)
     //err indicates the range from 1 to err+1
     //d2 will be empty at the end of this

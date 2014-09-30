@@ -1,5 +1,5 @@
-decksim V0.6.2
-==============
+decksim V0.7
+============
 Programmed by Demiurgos
 
 Deck simulator with real shufle methods to emulate a real deck, for any type of deck and game

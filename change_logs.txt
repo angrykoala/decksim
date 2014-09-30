@@ -1,3 +1,9 @@
+V 0.7:
+*added deal methods to deal 1 by 1 the cards in different decks
+*antifaro shuffle, to reverse the steps of a faro shuffle
+**deck.cpp renamed into decksim.cpp
+**change_log (this doc) moved up to root folder
+
 V 0.6.1:
 *rwbin.h modified from version 2 to work properly in decksim (erased precompiler macros)
 
